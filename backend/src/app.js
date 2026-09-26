@@ -20,6 +20,7 @@ const { defaultLimiter } = require('./middlewares/rateLimiter');
 const healthRouter = require('./routes/health');
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
+const inventoryRouter = require('./routes/inventory');
 
 const app = express();
 
@@ -71,6 +72,7 @@ app.use('/api', defaultLimiter);
 app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
+app.use('/api', inventoryRouter);
 
 // ─── 404 Handler ────────────────────────────────────────────────────────────
 app.use((req, res) => {
