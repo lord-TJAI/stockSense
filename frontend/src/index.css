@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 20 14% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14% 11%;
+    --border: 20 6% 90%;
+    --input: 20 6% 90%;
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 237 74% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 20 6% 95%;
+    --muted-foreground: 20 6% 40%;
+    --ring: 24 95% 53%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 20 14% 8%;
+    --foreground: 20 6% 95%;
+    --card: 20 14% 11%;
+    --card-foreground: 20 6% 95%;
+    --border: 20 6% 20%;
+    --input: 20 6% 20%;
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 237 74% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 20 14% 15%;
+    --muted-foreground: 20 6% 60%;
+    --ring: 24 95% 53%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
