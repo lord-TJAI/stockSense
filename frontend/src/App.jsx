@@ -1,26 +1,78 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import LoginPage from './pages/auth/LoginPage'
 import SignupPage from './pages/auth/SignupPage'
 import AcceptInvitePage from './pages/auth/AcceptInvitePage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
+import ProductsPage from './pages/inventory/ProductsPage'
+import WarehousesPage from './pages/inventory/WarehousesPage'
+import CategoriesPage from './pages/inventory/CategoriesPage'
 import useAuthStore from './store/authStore'
+import { cn } from './lib/utils'
 
-// Placeholder authenticated screens — replaced in later phases
-function DashboardStub() {
+const NAV = [
+  { to: '/dashboard', label: 'Dashboard', icon: '📊' },
+  { to: '/products', label: 'Products', icon: '📦' },
+  { to: '/warehouses', label: 'Warehouses', icon: '🏭' },
+  { to: '/categories', label: 'Categories', icon: '🗂️' },
+]
+
+function AppShell({ children }) {
   const user = useAuthStore((s) => s.user)
   const clearAuth = useAuthStore((s) => s.clearAuth)
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-stone-900">
-      <div className="text-center space-y-3 p-8">
-        <h1 className="text-2xl font-bold text-stone-800 dark:text-stone-100">Dashboard</h1>
-        <p className="text-stone-500">Welcome, <strong>{user?.name}</strong> ({user?.role})</p>
-        <p className="text-xs text-stone-400">Phase 1a complete — full UI coming in Phase 3</p>
-        <button onClick={() => { clearAuth(); window.location.href = '/login' }}
-          className="mt-4 px-4 py-2 rounded-lg bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 text-sm hover:bg-stone-300 dark:hover:bg-stone-600 transition">
-          Log out
-        </button>
-      </div>
+    <div className="min-h-screen flex bg-stone-50 dark:bg-stone-900">
+      {/* Sidebar */}
+      <aside className="w-56 shrink-0 bg-white dark:bg-stone-800 border-r border-stone-200 dark:border-stone-700 flex flex-col">
+        <div className="flex items-center gap-2 px-4 py-4 border-b border-stone-200 dark:border-stone-700">
+          <div className="w-7 h-7 rounded-lg bg-primary-500 flex items-center justify-center">
+            <span className="text-white font-bold text-sm">S</span>
+          </div>
+          <span className="font-bold text-stone-900 dark:text-stone-100">StockSense</span>
+        </div>
+        <nav className="flex-1 px-2 py-3 space-y-0.5">
+          {NAV.map(({ to, label, icon }) => (
+            <NavLink key={to} to={to}
+              className={({ isActive }) => cn(
+                'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                isActive
+                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
+                  : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-700/50'
+              )}>
+              <span>{icon}</span> {label}
+            </NavLink>
+          ))}
+        </nav>
+        <div className="px-3 py-3 border-t border-stone-200 dark:border-stone-700">
+          <div className="px-2 py-1 mb-1">
+            <p className="text-xs font-medium text-stone-700 dark:text-stone-300 truncate">{user?.name}</p>
+            <p className="text-xs text-stone-400 truncate">{user?.role === 'inventory_manager' ? 'Manager' : 'Staff'}</p>
+          </div>
+          <button onClick={() => { clearAuth(); window.location.href = '/login' }}
+            className="w-full px-3 py-2 rounded-lg text-sm text-left text-stone-500 hover:text-stone-700 dark:hover:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700/50 transition-colors">
+            🚪 Log out
+          </button>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main className="flex-1 overflow-y-auto">
+        {children}
+      </main>
+    </div>
+  )
+}
+
+function DashboardStub() {
+  const user = useAuthStore((s) => s.user)
+  return (
+    <div className="p-6 max-w-4xl mx-auto space-y-5">
+      <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">Dashboard</h1>
+      <p className="text-stone-500">Welcome back, <strong>{user?.name}</strong>! 👋</p>
+      <p className="text-sm text-stone-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-3">
+        📈 Full KPI dashboard coming in Phase 5. For now, use the sidebar to manage products, warehouses and categories.
+      </p>
     </div>
   )
 }
@@ -49,16 +101,8 @@ function LandingPage() {
   )
 }
 
-function NotFound() {
-  return (
-    <div className="min-h-screen flex items-center justify-center text-center px-4">
-      <div>
-        <p className="text-6xl font-bold text-stone-300 dark:text-stone-700 mb-4">404</p>
-        <h2 className="text-xl font-semibold text-stone-700 dark:text-stone-300 mb-2">Page not found</h2>
-        <a href="/" className="text-primary-600 hover:underline text-sm">Go home</a>
-      </div>
-    </div>
-  )
+function Protected({ children }) {
+  return <ProtectedRoute><AppShell>{children}</AppShell></ProtectedRoute>
 }
 
 export default function App() {
@@ -72,11 +116,13 @@ export default function App() {
         <Route path="/accept-invite/:token" element={<AcceptInvitePage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-        {/* Protected */}
-        <Route path="/dashboard" element={<ProtectedRoute><DashboardStub /></ProtectedRoute>} />
+        {/* Protected — wrapped in AppShell sidebar layout */}
+        <Route path="/dashboard"  element={<Protected><DashboardStub /></Protected>} />
+        <Route path="/products"   element={<Protected><ProductsPage /></Protected>} />
+        <Route path="/warehouses" element={<Protected><WarehousesPage /></Protected>} />
+        <Route path="/categories" element={<Protected><CategoriesPage /></Protected>} />
 
-        {/* 404 */}
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
