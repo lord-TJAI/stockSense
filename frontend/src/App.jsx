@@ -4,6 +4,7 @@ import LoginPage from './pages/auth/LoginPage'
 import SignupPage from './pages/auth/SignupPage'
 import AcceptInvitePage from './pages/auth/AcceptInvitePage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
+import DashboardPage from './pages/DashboardPage'
 import ProductsPage from './pages/inventory/ProductsPage'
 import WarehousesPage from './pages/inventory/WarehousesPage'
 import CategoriesPage from './pages/inventory/CategoriesPage'
@@ -79,18 +80,7 @@ function AppShell({ children }) {
   )
 }
 
-function DashboardStub() {
-  const user = useAuthStore((s) => s.user)
-  return (
-    <div className="p-6 max-w-4xl mx-auto space-y-5">
-      <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">Dashboard</h1>
-      <p className="text-stone-500">Welcome back, <strong>{user?.name}</strong>! 👋</p>
-      <p className="text-sm text-stone-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-3">
-        📈 Full KPI dashboard coming in Phase 5. For now, use the sidebar to manage products, warehouses and categories.
-      </p>
-    </div>
-  )
-}
+
 
 function LandingPage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -132,7 +122,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* Protected — wrapped in AppShell sidebar layout */}
-        <Route path="/dashboard"    element={<Protected><DashboardStub /></Protected>} />
+        <Route path="/dashboard"    element={<Protected><DashboardPage /></Protected>} />
         <Route path="/products"     element={<Protected><ProductsPage /></Protected>} />
         <Route path="/warehouses"   element={<Protected><WarehousesPage /></Protected>} />
         <Route path="/categories"   element={<Protected><CategoriesPage /></Protected>} />
