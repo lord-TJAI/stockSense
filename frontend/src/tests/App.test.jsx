@@ -1,51 +1,41 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Routes, Route } from 'react-router-dom'
+import LoginPage from '../pages/auth/LoginPage'
+import SignupPage from '../pages/auth/SignupPage'
+import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage'
 
-// Import the inner components via MemoryRouter, not the full App (which owns BrowserRouter)
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: false } },
-})
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
-// Lightweight stubs for testing routing behaviour without BrowserRouter conflict
-function Stub({ label }) {
-  return <p>{label}</p>
-}
-
-function Landing() {
-  return <h1>StockSense</h1>
-}
-
-import { Routes, Route } from 'react-router-dom'
-
-function TestRoutes() {
-  return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<Stub label="Login" />} />
-    </Routes>
-  )
-}
-
-function wrap(initialEntries) {
+function wrap(ui, path = '/') {
   return render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={initialEntries}>
-        <TestRoutes />
+      <MemoryRouter initialEntries={[path]}>
+        {ui}
       </MemoryRouter>
     </QueryClientProvider>
   )
 }
 
-describe('App skeleton routes', () => {
-  it('renders landing page with StockSense branding at /', () => {
-    wrap(['/'])
-    expect(screen.getByText('StockSense')).toBeDefined()
+describe('Auth pages — skeleton renders', () => {
+  it('LoginPage renders email and password fields', () => {
+    wrap(<LoginPage />)
+    expect(screen.getByLabelText(/email address/i)).toBeDefined()
+    expect(screen.getByLabelText(/password/i)).toBeDefined()
+    expect(screen.getByRole('button', { name: /log in/i })).toBeDefined()
   })
 
-  it('renders Login stub at /login', () => {
-    wrap(['/login'])
-    expect(screen.getByText('Login')).toBeDefined()
+  it('SignupPage renders org name, name, email, password fields', () => {
+    wrap(<SignupPage />)
+    expect(screen.getByLabelText(/organization name/i)).toBeDefined()
+    expect(screen.getByLabelText(/your full name/i)).toBeDefined()
+    expect(screen.getByRole('button', { name: /create organization/i })).toBeDefined()
+  })
+
+  it('ForgotPasswordPage renders email field on step 1', () => {
+    wrap(<ForgotPasswordPage />)
+    expect(screen.getByLabelText(/email address/i)).toBeDefined()
+    expect(screen.getByRole('button', { name: /send otp/i })).toBeDefined()
   })
 })
