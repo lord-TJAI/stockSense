@@ -6,6 +6,7 @@ const WarehouseRepository = require('../repositories/warehouseRepository');
 const LocationRepository = require('../repositories/locationRepository');
 const CategoryRepository = require('../repositories/categoryRepository');
 const ProductRepository = require('../repositories/productRepository');
+const StockLedgerRepository = require('../repositories/stockLedgerRepository');
 const ApiError = require('../utils/ApiError');
 const User = require('../models/User');
 
@@ -40,6 +41,7 @@ async function tenantScope(req, res, next) {
       locations: new LocationRepository(orgId),
       categories: new CategoryRepository(orgId),
       products: new ProductRepository(orgId),
+      ledger: new StockLedgerRepository(orgId),
     };
 
     next();
