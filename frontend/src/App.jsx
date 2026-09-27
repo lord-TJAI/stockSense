@@ -12,6 +12,8 @@ import ReceiptsPage from './pages/stock/ReceiptsPage'
 import DeliveriesPage from './pages/stock/DeliveriesPage'
 import TransfersPage from './pages/stock/TransfersPage'
 import AdjustmentsPage from './pages/stock/AdjustmentsPage'
+import UsersPage from './pages/settings/UsersPage'
+import SettingsPage from './pages/settings/SettingsPage'
 import useAuthStore from './store/authStore'
 import { cn } from './lib/utils'
 
@@ -25,6 +27,9 @@ const NAV = [
   { to: '/deliveries',  label: 'Deliveries',  icon: '📤' },
   { to: '/transfers',   label: 'Transfers',   icon: '🔄' },
   { to: '/adjustments', label: 'Adjustments', icon: '✏️' },
+  { separator: true,    label: 'ACCOUNT' },
+  { to: '/team',        label: 'Team',        icon: '👥' },
+  { to: '/settings',    label: 'Settings',    icon: '⚙️' },
 ]
 
 function AppShell({ children }) {
@@ -130,6 +135,8 @@ export default function App() {
         <Route path="/deliveries"   element={<Protected><DeliveriesPage /></Protected>} />
         <Route path="/transfers"    element={<Protected><TransfersPage /></Protected>} />
         <Route path="/adjustments"  element={<Protected><AdjustmentsPage /></Protected>} />
+        <Route path="/team"         element={<Protected><UsersPage /></Protected>} />
+        <Route path="/settings"     element={<Protected><SettingsPage /></Protected>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
