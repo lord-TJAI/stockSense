@@ -7,14 +7,23 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import ProductsPage from './pages/inventory/ProductsPage'
 import WarehousesPage from './pages/inventory/WarehousesPage'
 import CategoriesPage from './pages/inventory/CategoriesPage'
+import ReceiptsPage from './pages/stock/ReceiptsPage'
+import DeliveriesPage from './pages/stock/DeliveriesPage'
+import TransfersPage from './pages/stock/TransfersPage'
+import AdjustmentsPage from './pages/stock/AdjustmentsPage'
 import useAuthStore from './store/authStore'
 import { cn } from './lib/utils'
 
 const NAV = [
-  { to: '/dashboard', label: 'Dashboard', icon: '📊' },
-  { to: '/products', label: 'Products', icon: '📦' },
-  { to: '/warehouses', label: 'Warehouses', icon: '🏭' },
-  { to: '/categories', label: 'Categories', icon: '🗂️' },
+  { to: '/dashboard',   label: 'Dashboard',   icon: '📊' },
+  { to: '/products',    label: 'Products',    icon: '📦' },
+  { to: '/warehouses',  label: 'Warehouses',  icon: '🏭' },
+  { to: '/categories',  label: 'Categories',  icon: '🗂️' },
+  { separator: true,    label: 'STOCK OPS' },
+  { to: '/receipts',    label: 'Receipts',    icon: '📥' },
+  { to: '/deliveries',  label: 'Deliveries',  icon: '📤' },
+  { to: '/transfers',   label: 'Transfers',   icon: '🔄' },
+  { to: '/adjustments', label: 'Adjustments', icon: '✏️' },
 ]
 
 function AppShell({ children }) {
@@ -32,17 +41,23 @@ function AppShell({ children }) {
           <span className="font-bold text-stone-900 dark:text-stone-100">StockSense</span>
         </div>
         <nav className="flex-1 px-2 py-3 space-y-0.5">
-          {NAV.map(({ to, label, icon }) => (
-            <NavLink key={to} to={to}
-              className={({ isActive }) => cn(
-                'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
-                  : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-700/50'
-              )}>
-              <span>{icon}</span> {label}
-            </NavLink>
-          ))}
+          {NAV.map((item, idx) =>
+            item.separator ? (
+              <p key={idx} className="px-3 pt-3 pb-1 text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                {item.label}
+              </p>
+            ) : (
+              <NavLink key={item.to} to={item.to}
+                className={({ isActive }) => cn(
+                  'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                  isActive
+                    ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
+                    : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-700/50'
+                )}>
+                <span>{item.icon}</span> {item.label}
+              </NavLink>
+            )
+          )}
         </nav>
         <div className="px-3 py-3 border-t border-stone-200 dark:border-stone-700">
           <div className="px-2 py-1 mb-1">
@@ -117,10 +132,14 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* Protected — wrapped in AppShell sidebar layout */}
-        <Route path="/dashboard"  element={<Protected><DashboardStub /></Protected>} />
-        <Route path="/products"   element={<Protected><ProductsPage /></Protected>} />
-        <Route path="/warehouses" element={<Protected><WarehousesPage /></Protected>} />
-        <Route path="/categories" element={<Protected><CategoriesPage /></Protected>} />
+        <Route path="/dashboard"    element={<Protected><DashboardStub /></Protected>} />
+        <Route path="/products"     element={<Protected><ProductsPage /></Protected>} />
+        <Route path="/warehouses"   element={<Protected><WarehousesPage /></Protected>} />
+        <Route path="/categories"   element={<Protected><CategoriesPage /></Protected>} />
+        <Route path="/receipts"     element={<Protected><ReceiptsPage /></Protected>} />
+        <Route path="/deliveries"   element={<Protected><DeliveriesPage /></Protected>} />
+        <Route path="/transfers"    element={<Protected><TransfersPage /></Protected>} />
+        <Route path="/adjustments"  element={<Protected><AdjustmentsPage /></Protected>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

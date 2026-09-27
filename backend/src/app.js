@@ -21,6 +21,7 @@ const healthRouter = require('./routes/health');
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
 const inventoryRouter = require('./routes/inventory');
+const stockRouter = require('./routes/stock');
 
 const app = express();
 
@@ -73,6 +74,7 @@ app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api', inventoryRouter);
+app.use('/api', stockRouter);
 
 // ─── 404 Handler ────────────────────────────────────────────────────────────
 app.use((req, res) => {
