@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import KpiCard from '../../components/dashboard/KpiCard'
-import { useDashboardKpis, useLowStockAlerts, useOutOfStockAlerts } from '../../hooks/useDashboard'
-import useAuthStore from '../../store/authStore'
-import { cn } from '../../lib/utils'
+import KpiCard from '../components/dashboard/KpiCard'
+import { useDashboardKpis, useLowStockAlerts, useOutOfStockAlerts } from '../hooks/useDashboard'
+import useAuthStore from '../store/authStore'
+import { cn } from '../lib/utils'
 
 const DOC_META = {
   receipt:    { icon: '📥', label: 'Receipt',    color: 'text-green-600  dark:text-green-400' },

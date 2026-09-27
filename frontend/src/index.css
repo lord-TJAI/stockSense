@@ -39,10 +39,13 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-stone-200;
+  }
+  .dark * {
+    @apply border-stone-700;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 font-sans antialiased;
   }
 
   /* Reduced motion support */
