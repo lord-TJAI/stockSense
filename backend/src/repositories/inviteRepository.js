@@ -38,6 +38,29 @@ class InviteRepository extends BaseRepository {
     });
     return plainToken; // caller emails this to the invitee
   }
+  /** List all non-expired, non-accepted pending invites for the org. */
+  async listPending({ skip = 0, limit = 20 } = {}) {
+    this._requireTenantContext();
+    const filter = this._scope({ acceptedAt: null, expiresAt: { $gt: new Date() } });
+    const [invites, total] = await Promise.all([
+      Invite.find(filter)
+        .populate('invitedBy', 'name email')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Invite.countDocuments(filter),
+    ]);
+    return { invites, total };
+  }
+
+  /** Hard-delete (revoke) a pending invite. */
+  async revoke(inviteId) {
+    this._requireTenantContext();
+    const invite = await Invite.findOne(this._scope({ _id: inviteId, acceptedAt: null }));
+    if (!invite) return null;
+    await Invite.deleteOne({ _id: inviteId });
+    return invite;
+  }
 }
 
 module.exports = InviteRepository;

@@ -97,6 +97,30 @@ class UserRepository extends BaseRepository {
     ]);
     return { users, total };
   }
+  async reactivate(id) {
+    return this.findOneAndUpdate({ _id: id }, { $set: { isActive: true } });
+  }
+
+  async updateProfile(userId, { name }) {
+    return User.findByIdAndUpdate(userId, { $set: { name } }, { new: true }).select('-passwordHash -otpHash');
+  }
+
+  /** List ALL users including inactive (manager view for full control). */
+  async listAll({ skip = 0, limit = 20, search } = {}) {
+    this._requireTenantContext();
+    const filter = this._scope({});
+    if (search) {
+      filter.$or = [
+        { name:  { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
+    const [users, total] = await Promise.all([
+      User.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }).select('-passwordHash -otpHash'),
+      User.countDocuments(filter),
+    ]);
+    return { users, total };
+  }
 }
 
 module.exports = UserRepository;
